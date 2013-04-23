@@ -1,0 +1,243 @@
+// creates a maze with width and length n
+Maze::Maze(int n)
+{
+  size = n;
+	// N is the total number of rooms in the maze
+	int N = n*n;
+	// make nodes hold the correct number of rooms
+	nodes.resize(N);
+	int count = 0;
+	// close every door to every room in the maze
+	while(count < N)
+	{
+		nodes[count].north = 1;
+		nodes[count].south = 1;
+		nodes[count].east = 1;
+		nodes[count].west = 1;
+		count++;
+	}
+
+	// now create a starting and ending point
+	nodes[0].north = 0;
+	nodes[N-1].south = 0;
+
+	// for creating the maze
+	DisjointSets s(N);
+	// Makes sure that the maze is different everytime you run the program
+	srand (time(NULL));
+	// a loop to create the maze, picks a random room and connects it with an adjacent room until room 0 and room N-1 are connected
+	while (s.find(0) != s.find(N-1))
+	{
+		// first pick a random room
+		
+		int i = rand() %N;
+		// this will be the adjacent room to room i
+		int j;
+
+		int k;
+		// upper left room
+		if(i == 0)
+			{
+				k = rand() %2;
+				// pick j to be the room east of i
+				if(k == 0)
+				{
+					j = i+1;
+				}
+				// pick j to be the room south of i
+				else
+				{
+					j = i+n;
+				}
+
+			}
+		// upper right room
+			else if (i == (n-1))
+			{
+				k = rand() %2;
+				// pick j to be the room west of i
+				if (k == 0)
+				{
+					j = i-1;
+				}
+				// pick j to be the room south if i
+				else
+				{
+					j = i+n;
+				}
+			
+			}
+
+		// Top mid rooms of maze
+		else if(i < n)
+		{
+			k = rand() %3;
+			// pick j to be the room south of i
+			if(k == 0)
+			{
+				j = i+n;
+			}
+			// pick j to be the room east of i
+			else if(k == 1)
+			{
+				j = i+1;
+			}
+			// pick j to be the room west of i
+			else
+			{
+				j = i-1;
+			}
+
+		}
+
+		// bottom left room
+		else if(i == (N-n))
+		{
+			k = rand() %2;
+
+			// pick j to be the room east of i
+			if(k == 0)
+			{
+				j = i+1;
+			}
+			// pick j to be the room north of i
+			else
+			{
+				j = i-n;
+			}
+		}
+		// bottom right room
+		else if (i == (N-1))
+		{
+			k = rand() %2;
+
+			// pick j to be the room west of i
+			if(k == 0)
+			{
+				j = i-1;
+			}
+			// pick j to be the room north of i
+			else
+			{
+				j = i-n;
+			}
+		}
+		// Bottom row of maze
+		else if(i >= (N-n) ) 
+		{
+			k = rand() %3;
+			// pick j to be the room north of i
+			if(k == 0)
+			{
+				j = i-n;
+			}
+			// pick j to be the room east of i
+			else if(k == 1)
+			{
+				j = i+1;
+			}
+			// pick j to be the room west of i
+			else
+			{
+				j = i-1;
+			}
+			
+		}
+		// Left column of maze
+		else if((i%n) == 0)
+		{
+			k = rand() %3;
+			// pick j to be the room north of i
+			if(k == 0)
+			{
+				j = i-n;
+			}
+			// pick j to be the room south of i
+			else if(k == 1)
+			{
+				j = i+n;
+			}
+			// pick j to be the room east of i
+			else
+			{
+				j = i+1;
+			}
+
+		}
+		// Right column of maze
+		else if((i%n) == (n-1) )
+		{
+			k = rand() %3;
+			// pick j to be the room north of i
+			if(k == 0)
+			{
+				j = i-n;
+			}
+			// pick j to be the room south of i
+			else if(k == 1)
+			{
+				j = i+n;
+			}
+			// pick j to be the room west of i
+			else
+			{
+				j = i-1;
+			}
+		}
+		// all the rooms in the center
+		else
+		{
+			k = rand() %4;
+			// pick j to be the room north of i
+			if(k == 0)
+			{
+				j = i-n;
+			}
+			// pick j to be the room south of i
+			else if(k == 1)
+			{
+				j = i+n;
+			}
+			// pick j to be the room east of i
+			else if(k == 2)
+			{
+				j = i+1;
+			}
+			// pick j to be the room west of i
+			else
+			{
+				j = i-1;
+			}
+		}
+		// now union rooms i and j if they are in different sets, and knock down the walls between them
+		if(s.find(i) != s.find(j))
+		{
+			s.unionSets(i,j);
+			// if j is north of i
+			if(j == (i-n))
+			{
+				nodes[i].north = 0;
+				nodes[j].south = 0;
+			}
+			// if j is south if i
+			else if(j == (i+n))
+			{
+				nodes[i].south = 0;
+				nodes[j].north = 0;
+			}
+			// if j is east of i
+			else if(j == (i+1))
+			{
+				nodes[i].east = 0;
+				nodes[j].west = 0;
+			}
+			// if j is west if i
+			else
+			{
+				nodes[i].west = 0;
+				nodes[j].east = 0;
+			}
+		}
+	}
+
+}
